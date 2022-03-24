@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
-import 'user_transactions.dart';
 
-class NewTransaction extends StatelessWidget {
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
+class NewTransaction extends StatefulWidget {
   final Function addTx;
 
   NewTransaction(this.addTx);
-  void submitData(){
-    addTx(titleController.text,
-                        double.parse(amountController.text));
+
+  @override
+  State<NewTransaction> createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final titleController = TextEditingController();
+
+  final amountController = TextEditingController();
+
+  void submitData() {
+    final enteredTitle = titleController.text;
+    final enteredAmount = double.parse(amountController.text);
+    if (enteredAmount <= 0 || enteredTitle.isEmpty) {
+      return;
+    }
+
+    widget.addTx(enteredTitle, enteredAmount);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -22,27 +35,25 @@ class NewTransaction extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 TextField(
-                  decoration: InputDecoration(labelText: 'title'),
-                  // onChanged: (val) {
-                  //   titleInput = val;
-                  // },
-                  controller: titleController,
-                ),
+                    decoration: InputDecoration(labelText: 'title'),
+                    // onChanged: (val) {
+                    //   titleInput = val;
+                    // },
+                    controller: titleController,
+                    onSubmitted: (_) => submitData()),
                 TextField(
-                  decoration: InputDecoration(labelText: 'amount'),
-                  //onChanged: (val) => amountInput = val,
-                  controller: amountController,
-                  keyboardType: TextInputType.number,
-                  onSubmitted: ,
-                ),
+                    decoration: InputDecoration(labelText: 'amount'),
+                    //onChanged: (val) => amountInput = val,
+                    controller: amountController,
+                    keyboardType: TextInputType.number,
+                    onSubmitted: (_) => submitData()),
                 FlatButton(
                   child: Text('Add trans'),
                   textColor: Colors.purple,
-                  onPressed: () {
-                    // print(titleInput);
-                    // print(amountInput);
-                    
-                  },
+                  onPressed: submitData
+                  // print(titleInput);
+                  // print(amountInput);
+                  ,
                 )
               ])),
     );
